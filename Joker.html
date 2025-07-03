@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>👑GG TOOLS👑 - Auto Update Engine</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom, #1c1c1c, #000000);
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      color: #00ffc3;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #00bfff, #5f00ff);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      border-bottom: 3px solid #00ffc3;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .music-toggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      background: #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: #00ffc3;
+    }
+
+    .toggle-switch.active::before {
+      transform: translateX(20px);
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 30px auto;
+      background: #111;
+      border: 2px solid #00ffc3;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00ffc3aa;
+      padding: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #ffffff;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      border: 2px solid #00ffc3;
+      background: #000;
+      color: #00ffc3;
+      border-radius: 8px;
+    }
+
+    .generate-btn,
+    .log-btn,
+    .return-btn {
+      background: #00ffc3;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .generate-btn:hover,
+    .log-btn:hover,
+    .return-btn:hover {
+      background: #00cfa1;
+    }
+
+    .output {
+      background: #1e1e1e;
+      border: 2px dashed #00ffc3;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+      color: #00ffcc;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #00ffc3;
+      color: black;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sounds -->
+  <audio id="clickSound" src="clickSound.mp3"></audio>
+  <audio id="typeSound" src="typingSound.mp3"></audio>
+  <audio id="bgMusic" src="joker_theme.mp3" autoplay loop></audio>
+
+  <div class="header">
+    👑AUTO UPDATE👑
+
+    <!-- Toggle Music -->
+    <div class="music-toggle">
+      <span>🔊</span>
+      <div class="toggle-switch" onclick="toggleMusic(this)"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="input-group">
+      <label>🎮 Menu Index</label>
+      <input type="number" id="menuIndex" placeholder="Example: 2" oninput="playType()">
+    </div>
+
+    <div class="input-group">
+      <label>🔍 Method Name</label>
+      <input type="text" id="methodName" placeholder="get_Fov" oninput="playType()">
+    </div>
+
+    <div class="input-group">
+      <label>🧩 Class Name</label>
+      <input type="text" id="className" placeholder="Example: PlayerData" oninput="playType()">
+    </div>
+
+    <div class="input-group">
+      <label>🧬 Hex Patch</label>
+      <input type="text" id="hexValue" placeholder="00 00 80 52 C0 03 5F D6" oninput="playType()">
+    </div>
+
+    <div class="input-group">
+      <label>📢 Custom Toast</label>
+      <input type="text" id="toastText" placeholder="🧨 Fov Hack Enabled!" oninput="playType()">
+    </div>
+
+    <button class="generate-btn" onclick="playClick(); generateCode()"> Generate</button>
+    <button class="log-btn" onclick="playClick(); logAndCopyCode()"> Copy</button>
+
+    <!-- NEW DROPDOWN CHOICE -->
+    <div class="input-group">
+      <label>🌐 Choose Page</label>
+      <select id="navSelect" onchange="navigatePage()" onclick="playClick()">
+        <option value="">-- Select --</option>
+        <option value="JokerModz.html">🔙 Back To Main Page</option>
+        <option value="DarkModz.html">💥 Menu Builder </option>
+        <option value="password.html">💥 Password Engine</option>
+      </select>
+    </div>
+
+    <div class="output" id="output">
+      <button class="copy-btn" onclick="playClick(); copyCode()">Copy</button>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 Developed By Joker - Auto Update</div>
+
+  <script>
+    function playClick() {
+      const click = document.getElementById("clickSound");
+      click.currentTime = 0;
+      click.play();
+    }
+
+    function playType() {
+      const type = document.getElementById("typeSound");
+      type.currentTime = 0;
+      type.play();
+    }
+
+    function toggleMusic(el) {
+      const music = document.getElementById("bgMusic");
+      el.classList.toggle("active");
+      if (el.classList.contains("active")) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    function generateCode() {
+      const menu = document.getElementById("menuIndex").value.trim();
+      const method = document.getElementById("methodName").value.trim();
+      const hex = document.getElementById("hexValue").value.trim();
+      const className = document.getElementById("className").value.trim();
+      const toastMsg = document.getElementById("toastText").value.trim();
+
+      if (!menu || !method || !hex || !toastMsg || !className) {
+        alert("⚠️ Please fill in all fields!");
+        return;
+      }
+
+      const code = `
+if menu[${menu}] then
+  gg.clearResults()
+  gg.clearList()
+  HexPatch("${className}", "${method}", "${hex}")
+  gg.toast("${toastMsg}")
+end`.trim();
+
+      document.getElementById("output").innerText = code;
+    }
+
+    function copyCode() {
+      const code = document.getElementById("output").innerText;
+      if (!code) return alert("⚠️ Generate code first.");
+      navigator.clipboard.writeText(code)
+        .then(() => alert("✅ Code copied to clipboard!"))
+        .catch(() => alert("❌ Copy failed"));
+    }
+
+    function logAndCopyCode() {
+      const code = document.getElementById("output").innerText;
+      if (!code) return alert("⚠️ Generate code first.");
+      console.log("🧾 JokerMods Patch Code:\n" + code);
+      navigator.clipboard.writeText(code)
+        .then(() => alert("📋 Code copied & logged to console!"))
+        .catch(() => alert("❌ Copy failed"));
+    }
+
+    function navigatePage() {
+      const value = document.getElementById("navSelect").value;
+      if (value) window.location.href = value;
+    }
+  </script>
+
+</body>
+</html>

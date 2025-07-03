@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DarkModz ToolKit</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: #000;
+      color: #00ffcc;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+    }
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto 10px;
+    }
+    .logo-container img {
+      max-width: 120px;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 6px #00ffcc);
+      animation: pulse 3s infinite ease-in-out;
+      object-fit: cover;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #111;
+      border-bottom: 2px solid #00ffcc;
+    }
+    .tab-button {
+      padding: 14px 20px;
+      cursor: pointer;
+      color: #0ff;
+      background: #111;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    .tab-button:hover, .tab-button.active {
+      background: #0ff;
+      color: #000;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #0ff;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background: #222;
+      color: #0f0;
+      border: 1px solid #0ff;
+      border-radius: 8px;
+      font-family: monospace;
+      -webkit-text-stroke: 0.3px #00ffcc;
+    }
+    button:active { transform: scale(0.97); }
+    textarea {
+      width: 100%;
+      height: 240px;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 10px;
+      border: 1px solid #0ff;
+      border-radius: 8px;
+      animation: flicker 1.5s infinite alternate;
+      -webkit-text-stroke: 0.3px #00ffcc;
+    }
+    .copy-btn {
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0;
+    }
+    .optional-fields {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    .output {
+      background: #000;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      border: 1px solid #00ffcc;
+      white-space: pre-wrap;
+      color: #0f0;
+      animation: flicker 1.5s infinite alternate;
+      -webkit-text-stroke: 0.3px #00ffcc;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .social-icons a {
+      color: #0ff;
+      text-decoration: none;
+      font-size: 24px;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .social-icons a:hover {
+      transform: scale(1.2);
+      color: #fff;
+    }
+    #music-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #111;
+      border: 2px solid #00ffcc;
+      border-radius: 50%;
+      color: #0ff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="logo-container">
+  <img src="joker-logo.png" alt="DARKMODZ Logo">
+</div>
+
+<div class="tabs">
+  <button class="tab-button active" onclick="openTab(0)">Script Engine</button>
+  <button class="tab-button" onclick="openTab(1)">Hex Engine</button>
+  <button class="tab-button" onclick="openTab(2)">Social Media</button>
+</div>
+
+<!-- SCRIPT ENGINE -->
+<div class="tab-content active">
+  <div class="container">
+    <h2>💥 Script Engine 💥</h2>
+    <label>Menu Index</label>
+    <input type="number" id="menuIndex">
+    <label>Hex Value (ON)</label>
+    <input type="text" id="hexOn">
+    <label>Offset</label>
+    <input type="text" id="offset">
+    <label>Toast ON</label>
+    <input type="text" id="toastOn">
+    <div class="checkbox-row">
+      <input type="checkbox" id="enableElse" onchange="toggleOptionalFields()">
+      <label for="enableElse">Enable ON/OFF Restore</label>
+    </div>
+    <div class="optional-fields" id="optionalSection">
+      <label>Restore Hex (OFF)</label>
+      <input type="text" id="hexOff">
+      <label>Toast OFF</label>
+      <input type="text" id="toastOff">
+    </div>
+    <button onclick="generateScript()">Generate Script</button>
+    <textarea id="output" readonly></textarea>
+    <button class="copy-btn" onclick="copyScript()">📋 Copy</button>
+    <button class="copy-btn" onclick="window.open('Joker.html', '_blank')">AUTO UPDATE</button>
+  </div>
+</div>
+
+<!-- HEX ENGINE -->
+<div class="tab-content">
+  <div class="container">
+    <h2>💥 Hex Engine 💥</h2>
+    <input type="text" id="value" placeholder="Enter value (e.g. 1234)">
+    <select id="type">
+      <option value="int">Integer</option>
+      <option value="bool">Boolean</option>
+      <option value="float">Float</option>
+    </select>
+    <select id="arch">
+      <option value="64">ARM64</option>
+      <option value="32">ARM32</option>
+    </select>
+    <button onclick="generateHex()">🚀 Generate</button>
+    <button onclick="copyOutput()">📋 Copy</button>
+    <div class="output" id="result">💡 Hex output will appear here...</div>
+  </div>
+</div>
+
+<!-- SOCIAL MEDIA -->
+<div class="tab-content">
+  <div class="container">
+    <h2>👑 Connect with Me 👑</h2>
+    <div class="social-icons">
+      <a href="https://youtube.com/@darkjoker_cpm" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://t.me/Dark_mods_chat_group" target="_blank"><i class="fab fa-telegram"></i></a>
+      <a href="https://www.facebook.com/encantadia.fulache" target="_blank"><i class="fab fa-facebook"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="sound-click" src="clickSound.mp3"></audio>
+<audio id="sound-type" src="typingSound.mp3"></audio>
+<audio id="bg-music" src="joker_theme.mp3" loop></audio>
+<div id="music-toggle"><i class="fas fa-music"></i></div>
+
+<script>
+  function openTab(i) {
+    document.querySelectorAll('.tab-content').forEach((t, idx) => {
+      t.classList.toggle('active', idx === i);
+    });
+    document.querySelectorAll('.tab-button').forEach((b, idx) => {
+      b.classList.toggle('active', idx === i);
+    });
+  }
+
+  function toggleOptionalFields() {
+    document.getElementById("optionalSection").style.display =
+      document.getElementById("enableElse").checked ? "block" : "none";
+  }
+
+  function generateScript() {
+    const menu = document.getElementById("menuIndex").value;
+    const hexOn = document.getElementById("hexOn").value.toUpperCase();
+    const offset = document.getElementById("offset").value;
+    const toastOn = document.getElementById("toastOn").value || "[✔] SUCCESSFUL";
+    const useElse = document.getElementById("enableElse").checked;
+    const hexOff = document.getElementById("hexOff").value.toUpperCase();
+    const toastOff = document.getElementById("toastOff").value || "⛔ Restored";
+
+    if (!menu || !hexOn || !offset || (useElse && !hexOff)) {
+      alert("⚠️ Please fill all required fields.");
+      return;
+    }
+
+    let script = useElse ?
+`if menu[${menu}] then
+  DARKMODZ("libil2cpp.so", ${offset}, "${hexOn}")
+  gg.toast("${toastOn}")
+else
+  DARKMODZ("libil2cpp.so", ${offset}, "${hexOff}")
+  gg.toast("${toastOff}")
+end` :
+`if menu[${menu}] then
+  DARKMODZ("libil2cpp.so", ${offset}, "${hexOn}")
+  gg.toast("${toastOn}")
+end`;
+
+    document.getElementById("output").value = script;
+  }
+
+  function copyScript() {
+    const text = document.getElementById("output");
+    text.select();
+    document.execCommand("copy");
+    alert("✅ Script copied!");
+  }
+
+  function toBytes(instr) {
+    return [instr & 0xFF, (instr >> 8) & 0xFF, (instr >> 16) & 0xFF, (instr >> 24) & 0xFF];
+  }
+
+  function formatHex(bytes) {
+    return bytes.map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+  }
+
+  function generateHex() {
+    const raw = document.getElementById('value').value.trim();
+    const type = document.getElementById('type').value;
+    const arch = document.getElementById('arch').value;
+    let val;
+    try {
+      if (type === 'bool') val = raw.toLowerCase() === 'true' ? 1 : 0;
+      else if (type === 'int') val = parseInt(raw, 10);
+      else if (type === 'float') val = parseFloat(raw);
+    } catch { return alert('Invalid input'); }
+    let hexBytes = [];
+    if (type === 'float') {
+      hexBytes = arch === '64'
+        ? [0x00,0x00,0x80,0xD2, 0xC0,0x8F,0xD0,0xF2, 0xC0,0x25,0xE8,0xF2, 0xC0,0x03,0x5F,0xD6]
+        : [0xC0, 0x00, 0x0E, 0xE3, 0x64, 0x09, 0x44, 0xE3, 0x1E, 0xFF, 0x2F, 0xE1];
+    } else if (type === 'bool') {
+      hexBytes = arch === '64'
+        ? [0x20, 0x00, 0x80, 0xD2, 0xC0, 0x03, 0x5F, 0xD6]
+        : [val & 0xFF, 0, 0, 0];
+    } else {
+      const u = val >>> 0;
+      const lo = u & 0xFFFF, hi = (u >>> 16) & 0xFFFF;
+      hexBytes = arch === '64'
+        ? [...toBytes(0xD2800000 | (lo << 5)), ...toBytes(0xF2A00000 | (hi << 5)), ...toBytes(0xD65F03C0)]
+        : [...toBytes(0xE3000000 | ((lo & 0xF000) << 4) | (lo & 0x0FFF)), ...toBytes(0xE3400000 | ((hi & 0xF000) << 4) | (hi & 0x0FFF)), ...toBytes(0xE12FFF1E)];
+    }
+    document.getElementById('result').innerText =
+      `🔧 ${arch === '64' ? 'ARM64' : 'ARM32'} ${type.toUpperCase()}: ${val}\n🎯 Hex:\n${formatHex(hexBytes)}`;
+  }
+
+  function copyOutput() {
+    const t = document.getElementById('result').innerText;
+    navigator.clipboard.writeText(t).then(() => alert('✅ Copied!'));
+  }
+
+  const click = document.getElementById('sound-click');
+  const type = document.getElementById('sound-type');
+  document.querySelectorAll('button, .tab-button, .copy-btn').forEach(btn =>
+    btn.addEventListener('click', () => { click.currentTime = 0; click.play(); })
+  );
+  document.querySelectorAll('input, textarea').forEach(el =>
+    el.addEventListener('keypress', () => { type.currentTime = 0; type.play(); })
+  );
+
+  const bgMusic = document.getElementById('bg-music');
+  const musicToggle = document.getElementById('music-toggle');
+  let musicOn = false;
+  musicToggle.addEventListener('click', () => {
+    musicOn = !musicOn;
+    if (musicOn) {
+      bgMusic.play();
+      musicToggle.style.background = '#00ffcc';
+      musicToggle.style.color = '#000';
+    } else {
+      bgMusic.pause();
+      musicToggle.style.background = '#111';
+      musicToggle.style.color = '#0ff';
+    }
+  });
+</script>
+
+</body>
+</html>

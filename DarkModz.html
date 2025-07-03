@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GG SCRIPT BUILDER - Styled</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #0e0e0e;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffc8;
+      text-shadow: 0 0 10px #00ffc8;
+      margin-bottom: 30px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ffc8; }
+      to { text-shadow: 0 0 20px #00ffc8, 0 0 30px #00ffc8; }
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #1a1a1a;
+      color: #00ffcc;
+      border: 2px solid #333;
+      border-radius: 8px;
+      transition: 0.2s ease;
+    }
+    input:focus, textarea:focus {
+      border-color: #00ffc3;
+      outline: none;
+    }
+    button {
+      background: linear-gradient(135deg, #00ffc3, #00b39b);
+      color: #000;
+      font-weight: bold;
+      padding: 12px 20px;
+      margin: 10px 10px 10px 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px #00ffc84f;
+      transition: 0.2s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #00e6b0, #00a388);
+      transform: scale(1.03);
+    }
+    .entry {
+      background: #191919;
+      padding: 15px;
+      margin-top: 15px;
+      border-left: 4px solid #00ffc3;
+      border-radius: 6px;
+    }
+    .output {
+      background: #111;
+      color: #0f0;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      border: 2px solid #00ffc3;
+      box-shadow: 0 0 15px #00ffc324;
+      height: 400px;
+      overflow-y: auto;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #8cfcd4;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    ::selection {
+      background: #00ffc3;
+      color: #000;
+    }
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: #00ffc3;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffc3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+    .music-toggle:hover {
+      background: #00e6b0;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 10px #00ffc3; }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px #00ffc3; }
+      100% { transform: scale(1); box-shadow: 0 0 10px #00ffc3; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💥 Script Builder💥</h1>
+
+  <div class="section">
+    <label>👤 Script Creator:</label>
+    <input id="creator" placeholder="e.g. SCRIPT BY JOKER" oninput="playType()">
+  </div>
+
+  <div class="section">
+    <label>🎮 Game Title:</label>
+    <input id="game" placeholder="e.g. SCRIPT subwaySurf" oninput="playType()">
+  </div>
+
+  <div id="menuEntries"></div>
+
+  <button onclick="addEntry()">➕ Add Menu Item</button>
+  <button onclick="generateScript()">⚙ Generate Script</button>
+  <button onclick="copyOutput()">📋 Copy Script</button>
+  <button onclick="openHard()">⬅ Back To Main Page</button>
+
+  <div class="output" id="output">// Your script will appear here...</div>
+
+  <div class="music-toggle" onclick="toggleMusic()">🎵</div>
+
+  <!-- Audio Elements -->
+  <audio id="clickSound" src="clickSound.mp3" preload="auto"></audio>
+  <audio id="typeSound" src="typingSound.mp3" preload="auto"></audio>
+  <audio id="bgMusic" src="joker_theme.mp3" preload="auto" loop></audio>
+
+  <script>
+    let items = [];
+
+    function playClick() {
+      document.getElementById("clickSound").play();
+    }
+
+    function playType() {
+      const sound = document.getElementById("typeSound");
+      sound.currentTime = 0;
+      sound.play();
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById("bgMusic");
+      if (music.paused) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    function addEntry() {
+      playClick();
+      const id = items.length;
+      items.push({});
+      const div = document.createElement("div");
+      div.className = "entry";
+      div.innerHTML = `
+        <label>🔤 Menu Item ${id + 1}:</label>
+        <input id="name${id}" placeholder="e.g. Unlimited Coins" oninput="playType()">
+      `;
+      document.getElementById("menuEntries").appendChild(div);
+    }
+
+    function openHard() {
+      playClick();
+      window.open('JokerModz.html', '_blank');
+    }
+
+    function generateScript() {
+      playClick();
+      const creator = document.getElementById("creator").value.trim() || "SCRIPT BY UNKNOWN";
+      const game = document.getElementById("game").value.trim() || "SCRIPT UnknownGame";
+
+      let menuList = '';
+      let menuActions = '';
+
+      items.forEach((_, i) => {
+        const name = document.getElementById(`name${i}`).value.trim();
+        if (!name) return;
+        menuList += ` "${name}" ,--${i + 1}\n`;
+        menuActions += `if menu[${i + 1}] then\n\nend\n\n`;
+      });
+
+      const fullMenu = `menu = gg.multiChoice({\n${menuList} "☣ 𝙀 𝙓 𝙄 𝙏 ☣"},nil,"${creator}\\n${game}")`;
+
+      const script = `------++Example++-------- 
+local n, startAddress, endAddress = nil, 0, 0
+local function name(lib)
+ if n == lib then
+  return startAddress, endAddress
+ end
+ local ranges = gg.getRangesList(lib or 'libil2cpp.so')
+ for i, v in ipairs(ranges) do
+  if v.state == "Xa" then
+   startAddress = v.start
+   endAddress = ranges[#ranges]['end']
+   break
+  end
+ end
+ return startAddress, endAddress
+end
+
+local function setHexMemory(libname, offset, hex)
+ name(libname)
+ local t, total = {}, 0
+ for h in string.gmatch(hex, "%S%S") do
+     table.insert(t, {
+         address = startAddress + offset + total,
+         flags = gg.TYPE_BYTE,
+         value = h + "r"
+     })
+     total = total + 1
+ end
+ local res = gg.setValues(t)
+ if type(res) ~= 'string' then
+  return true
+ else
+  gg.alert(res)
+  return false
+ end
+end
+
+function main()
+gg.toast("WELCOME TO DARKMODZ")
+${fullMenu}
+  if menu then 
+
+${menuActions}if menu[${items.length + 1}] then
+   os.exit()
+  end
+ end
+end
+
+while true do
+    if gg.isVisible() then
+        gg.setVisible(false)
+        main()
+    end
+end`;
+
+      document.getElementById("output").textContent = script;
+    }
+
+    function copyOutput() {
+      playClick();
+      const text = document.getElementById("output").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ Script copied to clipboard!");
+      });
+    }
+  </script>
+</body>
+</html>
